@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: gestionapp-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: gestionappdb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rootpassword
+    ports:
+      - "3306:3306" # Expose MySQL on default port 3306
+    volumes:
+      - db-data:/var/lib/mysql # Persist data even if the container stops
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestionapp-app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "9090:9090" # Map the app's port
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: rootpassword
+
+volumes:
+  db-data:
